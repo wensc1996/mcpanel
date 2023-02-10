@@ -1,0 +1,91 @@
+.view{
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: absolute;
+}
+.overflow-y{
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.overfow-y-h{
+	overflow-y: hidden;
+}
+.overflow-x{
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.overfow-x-h{
+	overflow-x: hidden;
+}
+.hide{
+	display: none;
+}
+/**  弹性盒flex **/
+.row{
+    display: flex;
+    flex-direction: row;
+}
+.col{
+    display: flex;
+    flex-direction: column;
+}
+.flex{
+    flex: 1;
+}
+
+.fw-w{
+    flex-wrap: wrap;
+}
+.jc-sb{
+    justify-content: space-between;
+}	
+.jc-fs{
+    justify-content: flex-start;
+}
+.jc-c{
+    justify-content: center;
+}
+.jc-ar{
+	justify-content: space-around;
+}
+.jc-fe{
+    justify-content: flex-end;
+}
+.ai-fs{
+    align-items: flex-start;
+}
+.ai-c{
+    align-items: center;
+}
+.t-center{
+	text-align: center;
+}
+.t-right{
+	text-align: right;
+}
+/* 文字溢出缩略 */
+.wd-break{
+    word-break: break-all;
+}
+.ole{
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+.el-3{
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+}
+
+/* 底部边框 */
+.work-line{
+    border-bottom: 1px solid #EEE;
+}
+
+.width-100{
+    width: 100%;
+}
