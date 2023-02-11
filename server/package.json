@@ -24,7 +24,6 @@
   "dependencies": {
     "egg": "^2.6.1",
     "egg-scripts": "^2.6.0",
-    "egg-sqlite3": "^1.0.1",
     "sqlite3": "^5.1.4"
   },
   "devDependencies": {

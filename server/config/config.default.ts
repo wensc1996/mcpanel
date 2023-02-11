@@ -20,9 +20,6 @@ export default (appInfo: EggAppInfo) => {
   // 如果你的服务未部署在反向代理之后，请不要开启此配置，以防被恶意用户伪造请求 IP 等信息。
   config.proxy = true;
 
-  const sqlite3 = {
-    database:'sc.db'
-  };
   const security = {
     csrf: {
       enable: false,
@@ -36,7 +33,6 @@ export default (appInfo: EggAppInfo) => {
   return {
     ...config,
     ...bizConfig,
-    sqlite3,
     security
   };
 };

@@ -1,9 +1,4 @@
 import { EggPlugin } from 'egg';
-exports.sqlite3 = {
-  enable: true,
-  package: 'egg-sqlite3',
-};
-
 const plugin: EggPlugin = {
   
   // static: true,

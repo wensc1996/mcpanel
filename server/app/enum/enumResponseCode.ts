@@ -6,4 +6,5 @@ export enum BaseCode {
 export enum LoginCode {
     LOGINSUCCESS = 0,
     PASSWORDERROR = -1,
+    UPDATESAMEPASSWORD = -3
 };
