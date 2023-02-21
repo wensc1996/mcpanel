@@ -3,6 +3,7 @@ import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
 import React from 'react';
 import '../styles/layout/index.css'
+import UseState from '../views/hookTest/UseState'
 
 const { Header, Content, Sider } = Layout;
 
@@ -62,13 +63,7 @@ const App: React.FC = () => {
                             minHeight: 280,
                         }}
                     >
-                        <p>Content</p>
-                        <p>Content</p>
-                        <p>Content</p>
-                        <p>Content</p>
-                        <p>Content</p>
-                        <p>Content</p>
-                        <p>Content</p>
+                        <UseState></UseState>
                     </Content>
                 </Layout>
             </Layout>
@@ -76,4 +71,4 @@ const App: React.FC = () => {
     )
 };
 
-export default React.memo(App);
+export default App;

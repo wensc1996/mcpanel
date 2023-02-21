@@ -1,31 +1,26 @@
 
 import React from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, message  } from 'antd';
 import './login.css'
 import { useNavigate } from 'react-router-dom';
 import {
-    LoginResponse
-} from '../../types/response'
-import {
-    apiLogin
-} from '../../utils/api'
+    apiLogin, LoginParam
+} from '../../utils/apis/userApi'
 const App: React.FC = () => {
     const navigate = useNavigate()
-    const onFinish = async (values: any) => {
-        let res  = await apiLogin(values)
-        console.log(res)
-        console.log('Success:', values);
-        navigate('/aa')
-        // post({
-        //     url: '/api/login',
-        //     body: values
-        // }).then(res => {
-        //     console.log(res)
-        //     console.log('Success:', values);
-        //     navigate('/aa')
-        // }).catch(e => {
-            
-        // })
+    const onFinish = async (values: LoginParam) => {
+        let {code, data, msg} = await apiLogin(values)
+        if(code !== 0) {
+            message.open({
+                type: 'error',
+                content: msg,
+                duration: 3,
+            });
+        } else {
+            console.log(data)
+            console.log('Success:', values);
+            navigate('/aa')
+        }
     };
     
     const onFinishFailed = (errorInfo: any) => {
@@ -33,9 +28,6 @@ const App: React.FC = () => {
     };
     const [loginForm] = Form.useForm()
 
-    const handleLogin = () => {
-        console.log(loginForm)
-    }
     const userName= Form.useWatch('username', loginForm);
     console.log(userName)
     return (<>
@@ -50,7 +42,7 @@ const App: React.FC = () => {
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
-                >
+            >
                 <Form.Item
                     label="用户名"
                     name="userId"
@@ -67,18 +59,14 @@ const App: React.FC = () => {
                     <Input.Password />
                 </Form.Item>
 
-                <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 4, span: 16 }}>
-                    <Checkbox>记住我</Checkbox>
-                </Form.Item>
-
                 <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                     <Button type="primary" htmlType="submit">
                     登录
                     </Button>
                 </Form.Item>
-                </Form>
+            </Form>
             </div>
         </div>
     </>)
 };
-export default React.memo(App);
+export default App;

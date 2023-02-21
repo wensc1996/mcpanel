@@ -48,7 +48,6 @@
   const Button = (prop: { value: string }, context: { color: string }) => (
     <button />
   );
-  复制代码
   ```
 
   可以看到，函数组件就是一个 `JS`函数，因此，**函数重载**也完全适用。
@@ -129,6 +128,22 @@
     <NotAValidComponent />; // 报错
     <NotAValidFactoryFunction />; // 报错
     ```
+### useState
+
+```typescript
+const [info, setInfo] = useState({
+      name: '张三',
+      age: 14,
+      sex: '男'
+});
+const changeUserName = () => {
+    // 修改时，需要展开重新赋值，不能去修改Info原值
+    setInfo({
+        ...info,
+        name: info.name == '李四' ? '张三' : '李四'
+    })
+}
+```
 
 ### useEffect
 
@@ -174,13 +189,27 @@ function Example() {
     }, 1000);
     return () => clearInterval(id);
   }, []); // 只要传递数组作为 useEffect 的第二个可选参数即可，如果想执行只运行一次的 effect（仅在组件挂载和卸载时执行），可以传递一个空数组（[]）作为第二个参数。这就告诉 React 你的 effect 不依赖于 props 或 state 中的任何值，所以它永远都不需要重复执行
+
+
+  // useEffect回调函数使用asnyc不被允许，会造成该函数延迟返回
+  useEffect(async () => {
+    const id = await getId()
+  }, []);
   return <h1>{count}</h1>
 }
 ```
+### useRef
+绑定DOM元素，函数组件没有实例，无法通过Ref获取, Ref获取的必须是类组件
 
 ### React.memo
 
-`React.memo` 等效于 `PureComponent`，但它只比较 props。（你也可以通过第二个参数指定一个自定义的比较函数来比较新旧 props。如果函数返回 true，就会跳过更新。）
+`React.memo` 等效于 `PureComponent`
+
+如果你的函数组件在给定相同 props 的情况下渲染相同的结果，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果。
+
+它适用于函数组件，但不适用于 class 组件, 且它只比较 props。默认情况下其只会对复杂对象做浅层对比（你也可以通过第二个参数指定一个自定义的比较函数来比较新旧 props。如果函数返回 true，就会跳过更新。）
+
+如果函数组件被 React.memo 包裹，且其实现中拥有 useState 或 useContext 的 Hook，当 context 发生变化时，它仍会重新渲染。
 
 #### [`useMemo`](https://zh-hans.reactjs.org/docs/hooks-reference.html#usememo)
 
