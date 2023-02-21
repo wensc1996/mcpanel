@@ -2,7 +2,7 @@ import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
 import React from 'react';
-import '../styles/layout/index.css'
+import '../styles/layout/index.less'
 import UseState from '../views/hookTest/UseState'
 
 const { Header, Content, Sider } = Layout;

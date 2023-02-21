@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button, Checkbox, Form, Input, message  } from 'antd';
-import './login.css'
+import './login.less'
 import { useNavigate } from 'react-router-dom';
 import {
     apiLogin, LoginParam
