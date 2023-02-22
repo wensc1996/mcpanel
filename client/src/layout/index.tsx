@@ -4,6 +4,9 @@ import { Breadcrumb, Layout, Menu } from 'antd';
 import React from 'react';
 import '../styles/layout/index.less'
 import UseState from '../views/hookTest/UseState'
+import { useAppSelector, useAppDispatch } from '../hooks/storeHook'
+import { RootState } from '../store/store';
+import img from '../assets/images/u=104930965,2278568771&fm=26&gp=0.jpg'
 
 const { Header, Content, Sider } = Layout;
 
@@ -32,12 +35,17 @@ const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOu
 );
 
 const App: React.FC = () => {
-    
+    const userInfo = useAppSelector((state: RootState) => state.userInfo)
     return (
         <Layout className='view overfow-y-h'>
-            <Header className="header">
-                <div className="logo" />
-                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} items={items1} />
+            <Header className="header row jc-sb">
+                <div className='flex row'>
+                    <div className="logo">
+                        <img src={img} alt="" style={{height: '40px', width: '40px'}}/>
+                    </div>
+                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} items={items1} className="flex"/>
+                </div>
+                <div style={{color: 'red'}}>{userInfo.account}</div>
             </Header>
             <Layout className="flex">
                 <Sider width={200} className="site-layout-background overflow-y overfow-x-h">

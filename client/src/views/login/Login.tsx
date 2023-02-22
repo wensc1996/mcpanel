@@ -6,7 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import {
     apiLogin, LoginParam
 } from '../../utils/apis/userApi'
+import { useAppSelector, useAppDispatch } from '../../hooks/storeHook'
+import { update } from '../../store/userInfoSlice'
+import { RootState } from '../../store/store';
 const App: React.FC = () => {
+    const userInfo = useAppSelector((state: RootState) => state.userInfo)
+    const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const onFinish = async (values: LoginParam) => {
         let {code, data, msg} = await apiLogin(values)
@@ -17,9 +22,12 @@ const App: React.FC = () => {
                 duration: 3,
             });
         } else {
-            console.log(data)
-            console.log('Success:', values);
-            navigate('/aa')
+            if(data) {
+                dispatch(update(data))
+                console.log(data)
+                console.log('Success:', values);
+                navigate('/aa')
+            }
         }
     };
     
@@ -58,7 +66,7 @@ const App: React.FC = () => {
                 >
                     <Input.Password />
                 </Form.Item>
-
+                <div>{JSON.stringify(userInfo)}</div>
                 <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                     <Button type="primary" htmlType="submit">
                     登录

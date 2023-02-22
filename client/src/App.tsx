@@ -5,8 +5,6 @@ import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import Layout from './layout/index'
 import Login from './views/login/Login'
 import NotFound from './component/NotFound'
-import { store } from './store/store'
-import { Provider } from 'react-redux'
 // 组件大驼峰命名法（首字母大写）
 // 图片等静态资源通过http请求，不能使用相对路径获取 使用import logo from './logo.png' src= {logo}
 import {
@@ -48,10 +46,7 @@ const router = createHashRouter([
 ]);
 function App() {
     return (
-        // <Layout/>
-        <Provider store={store}>
-            <RouterProvider router={router}/>
-        </Provider>
+        <RouterProvider router={router}/>
     );
 }
 
