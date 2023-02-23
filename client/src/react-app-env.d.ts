@@ -2,6 +2,7 @@
 /// <reference types="react" />
 /// <reference types="react-dom" />
 
+// 全局定义TS类型，尽量不要使用import ... from ''',可以采用import('...')的形式,全局基本以declare开头
 declare namespace NodeJS {
   interface ProcessEnv {
     readonly NODE_ENV: 'development' | 'production' | 'test';

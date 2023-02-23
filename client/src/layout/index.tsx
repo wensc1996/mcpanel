@@ -1,4 +1,3 @@
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
 import React from 'react';
@@ -7,6 +6,8 @@ import UseState from '../views/hookTest/UseState'
 import { useAppSelector, useAppDispatch } from '../hooks/storeHook'
 import { RootState } from '../store/store';
 import img from '../assets/images/u=104930965,2278568771&fm=26&gp=0.jpg'
+import {routerRaw} from '../router';
+import { MenuItemType } from 'antd/lib/menu/hooks/useItems';
 
 const { Header, Content, Sider } = Layout;
 
@@ -15,27 +16,21 @@ const items1: MenuProps['items'] = ['1', '2', '3'].map(key => ({
     label: `nav ${key}`,
 }));
 
-const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-    (icon, index) => {
-        const key = String(index + 1);
-        return {
-            key: `sub${key}`,
-            icon: React.createElement(icon),
-            label: `subnav ${key}`,
 
-            children: new Array(1).fill(null).map((_, j) => {
-                const subKey = index * 4 + j + 1;
-                return {
-                    key: subKey,
-                    label: `option${subKey}`,
-                };
-            }),
-        };
-    },
-);
 
 const App: React.FC = () => {
+    const items2: MenuProps['items'] = routerRaw.map(routerItem => {
+        return {
+            key : routerItem.path, 
+            icon: React.createElement(UserOutlined),
+            label: routerItem.meta?.name,
+            onClick: (param: any) => {console.log(param)},
+        }
+    })
     const userInfo = useAppSelector((state: RootState) => state.userInfo)
+    const handleMenuClicked = (param: {item: any, key: string, keyPath: string, domEvent : any}) => {
+        console.log(param)
+    }
     return (
         <Layout className='view overfow-y-h'>
             <Header className="header row jc-sb">
@@ -51,8 +46,8 @@ const App: React.FC = () => {
                 <Sider width={200} className="site-layout-background overflow-y overfow-x-h">
                     <Menu
                         mode="inline"
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
+                        defaultSelectedKeys={['user-manage']}
+                        defaultOpenKeys={['user-manage']}
                         style={{ height: '100%', borderRight: 0 }}
                         items={items2}
                     />
