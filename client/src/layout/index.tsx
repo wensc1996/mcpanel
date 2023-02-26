@@ -19,14 +19,15 @@ const items1: MenuProps['items'] = ['1', '2', '3'].map(key => ({
 
 
 const App: React.FC = () => {
-    const items2: MenuProps['items'] = routerRaw.map(routerItem => {
-        return {
-            key : routerItem.path, 
-            icon: React.createElement(UserOutlined),
-            label: routerItem.meta?.name,
-            onClick: (param: any) => {console.log(param)},
-        }
-    })
+    const items2: MenuProps['items'] = []
+    // routerRaw.map(routerItem => {
+    //     return {
+    //         key : routerItem.path, 
+    //         icon: React.createElement(UserOutlined),
+    //         label: routerItem.meta?.name,
+    //         onClick: (param: any) => {console.log(param)},
+    //     }
+    // })
     const userInfo = useAppSelector((state: RootState) => state.userInfo)
     const handleMenuClicked = (param: {item: any, key: string, keyPath: string, domEvent : any}) => {
         console.log(param)

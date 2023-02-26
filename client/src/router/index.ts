@@ -49,15 +49,13 @@ let routerRaw: RouteObjects[]= [
             icon: React.createElement(UserOutlined),
             name: '用户管理'
         },
-        id: 'main',
         children: [{
-            id: 'main',
             path: "/main",
             element: React.createElement(Layout),
-            meta: {
-                icon: React.createElement(UserOutlined),
-                name: '用户管理'
-            },
+            // meta: {
+            //     icon: React.createElement(UserOutlined),
+            //     name: '用户管理'
+            // },
         }]
     },
 ]
