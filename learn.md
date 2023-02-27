@@ -128,6 +128,7 @@
     <NotAValidComponent />; // 报错
     <NotAValidFactoryFunction />; // 报错
     ```
+
 ### useState
 
 ```typescript
@@ -198,7 +199,9 @@ function Example() {
   return <h1>{count}</h1>
 }
 ```
+
 ### useRef
+
 绑定DOM元素，函数组件没有实例，无法通过Ref获取, Ref获取的必须是类组件
 
 ### React.memo
@@ -252,3 +255,132 @@ function DeepChild(props) {
   );
 }
 ```
+
+
+### `Fragment-<></>只为了React逻辑实现，不会渲染到DOM之上`
+
+```ts
+<Fragment></Fragment> = <></> // Fragment可以添加循环key值
+```
+
+### React.FC
+
+```
+interface IProps {
+username: string
+}
+// 可以在FC<>里面添加props类型约束
+React.FC<IProps> = ({username}) => {
+}
+```
+
+### 状态提升
+
+所谓状态提升，即父组件将数据和操作方法传递给子组件，子组件使用对应方法操纵父组件的状态内容，反向数据流来解耦
+
+```tsx
+const DeleletButton: React.FC<{
+    user: IUser;
+    onDelete: (user: IUser) => void
+}> = ({user, onDelete}) => {
+    function deleteInner() {
+	// 此处可添加异步请求，判断是否可删除再删除，反向数据控制
+        onDelete(user)
+    }
+    return <><button onClick={deleteInner}>删除</button></>
+}
+
+const App: React.FC = () => {
+    const [userList, setUserList] = useState(_userList)
+    function deleteUser (user: IUser) {
+        setUserList(userList.filter(ele => ele.id != user.id))
+    }
+    return ( <>
+        <ul>
+            {
+            userList.map(user => 
+            <Fragment key={user.id}>
+                <li>
+                    {user.name} <DeleletButton user={user} onDelete={deleteUser}></DeleletButton>
+                </li>
+            </Fragment>)
+            }
+        </ul>
+    </> );
+}
+```
+
+### useRef，React.createRef() | React.forwardRef
+
+获取DOM，谨慎使用，可能造成XSS攻击
+
+```tsx
+// 第一种方式
+const divRef = useRef<HTMLDivElement>(null)
+    function changeContent() {
+        if(divRef.current) {
+            divRef.current.innerHTML = "你好啊"
+        }
+    }
+<div ref={divRef}>你好</div>
+<button onClick={changeContent}></button>
+
+// 第二种方式
+// 此处直接拿取还拿不到，尚未挂载，需要加到useEffect中
+    const inputRef = React.createRef<HTMLInputElement>()
+    useEffect(() => {
+        if(inputRef.current) {
+            inputRef.current.focus()
+        }
+    })
+<input type="text" ref={inputRef}/>
+
+```
+
+```tsx
+// 推荐使用以下方式防止XSS
+<div dangerouslySetInnerHTML={{__html:"<h1>我才更好</h1>"}}></div>
+```
+
+#### React.forwardRef
+
+由于函数式组件无法拿取到*`子组件`*的实例，需要通过forwardRef去拿，如果是类子组件可以直接使用ref拿取。不推荐，推荐使用状态提升，事件回调，具有耦合性
+
+```tsx
+const ChildFC = React.forwardRef((props, ref: Ref<HTMLInputElement>) => {
+        return (<>
+            <input ref={ref}/>
+        </>)
+    })
+const fcRef = useRef<HTMLInputElement>(null);
+    function fcRefClick() {
+        if(fcRef.current) {
+            fcRef.current.focus()
+        }
+    }
+<div>
+	<ChildFC ref={fcRef}></ChildFC>
+	<button onClick={fcRefClick}>聚焦</button>
+</div>
+```
+
+### Hook
+
+不要在循环中hook，hook会引起视图更新，循环hook会造成无限循环
+
+usestate `<number>`(0)  // 次数number可写可不写，使用了ts的类型推断
+
+```tsx
+const [count, setCount] = useState(0)
+// 其中setCount是异步函数
+在for(let i = 0; i < 10; i++) {
+	// 如果不是频繁计算，以下两种方式等同，但是频繁计算需要使用箭头函数
+	cetCount(c + 1)
+	// 使用箭头函数，始终将上一次的结果赋值到此处作为形参，可解决闭包问题
+	setCount((c) => c + 1)
+}
+```
+
+#### useEffect
+
+页面初始化和页面变动时就会触发useEffect,所以可以在useEffect中添加监控字段，[]只在初始化调用，按需添加字段即可，会造成闭包问题

@@ -1,22 +1,99 @@
-import React, { MutableRefObject, useRef, useState } from "react";
+
+import React, { Fragment, MouseEventHandler, MutableRefObject, Ref, useEffect, useRef, useState } from "react";
+
+interface IUser {
+    name: string,
+    id: number
+}
+const _userList:IUser[] = []
+
+for(let i = 0; i< 10; i++) {
+    _userList.push({
+        name: 'username' + i,
+        id: i
+    })
+}
+
+const DeleletButton: React.FC<{
+    user: IUser;
+    onDelete: (user: IUser) => void
+}> = ({user, onDelete}) => {
+    function deleteInner() {
+        onDelete(user)
+    }
+    return <><button onClick={deleteInner}>删除</button></>
+}
 
 const App: React.FC = () => {
-    const [info, setInfo] = useState({
-        name: '张三',
-        age: 14,
-        sex: '男'
-    });
-    const changeUserName = () => {
-        setInfo({
-            ...info,
-            name: info.name == '李四' ? '张三' : '李四'
-        })
+    const [userList, setUserList] = useState(_userList)
+    function deleteUser (user: IUser) {
+        setUserList(userList.filter(ele => ele.id != user.id))
     }
-    const hello: MutableRefObject<undefined> = useRef()
+
+    const divRef = useRef<HTMLDivElement>(null)
+    function changeContent() {
+        if(divRef.current) {
+            divRef.current.innerHTML = "你好啊"
+        }
+    }
+    // 此处直接拿取还拿不到，尚未挂载，需要加到useEffect中
+    const inputRef = React.createRef<HTMLInputElement>()
+    useEffect(() => {
+        if(inputRef.current) {
+            inputRef.current.focus()
+        }
+    })
+
+    const ChildFC = React.forwardRef((props, ref: Ref<HTMLInputElement>) => {
+        return (<>
+            <input ref={ref}/>
+        </>)
+    })
+
+    const fcRef = useRef<HTMLInputElement>(null);
+    function fcRefClick() {
+        if(fcRef.current) {
+            fcRef.current.focus()
+        }
+    }
+
+    const [timeCount, setTimeCount] = useState(10)
+    
+    const timer = useRef<NodeJS.Timer>()
+    useEffect(() => {
+        console.log(timeCount)
+        timer.current = setInterval(() => {
+            
+            setTimeCount((c) => c-1)
+        }, 1000)
+        // 这里就会造成闭包，无法清除
+        if(timeCount == 0) {
+            clearInterval(timer.current)
+        }
+    }, [])
     return ( <>
-        <p>helllo</p>
-        <button onClick={changeUserName}>点击</button>
-        <div>{JSON.stringify(info)}</div>
+        <div ref={divRef}>你好</div>
+        <button onClick={changeContent}></button>
+        <div dangerouslySetInnerHTML={{__html:"<h1>我才更好</h1>"}}></div>
+        <input type="text" ref={inputRef}/>
+
+        <div>
+            <ChildFC ref={fcRef}></ChildFC>
+            <button onClick={fcRefClick}>聚焦</button>
+        </div>
+
+        
+
+        <ul>
+            {
+            userList.map(user => 
+            <Fragment key={user.id}>
+                <li>
+                    {user.name} <DeleletButton user={user} onDelete={deleteUser}></DeleletButton>
+                </li>
+            </Fragment>)
+            }
+        </ul>
     </> );
 }
  

@@ -41,7 +41,40 @@ let routerStatic: RouteObject[] = [{
 //         }]
 //     },
 // ]
-const router = createHashRouter(routerStatic);
+// const router = createHashRouter(routerStatic);
+// export type RouteObjectWithMeta = DataRouteObject & {
+//     meta?: {
+//         icon: React.ReactNode,
+//         name: string
+//     },
+//     children?: RouteObjectWithMeta[]
+// }
+// export type RouteObjects = RouteObject & {
+//     children?: RouteObjects[],
+//     meta?: {
+//         icon: React.ReactNode,
+//         name: string
+//     }
+// }
+let routerRaw: RouteObjects[]= [
+    {
+        path: "/main",
+        element: React.createElement(Layout),
+        meta: {
+            icon: React.createElement(UserOutlined),
+            name: '用户管理'
+        },
+        children: [{
+            path: "/main",
+            element: React.createElement(Layout),
+            // meta: {
+            //     icon: React.createElement(UserOutlined),
+            //     name: '用户管理'
+            // },
+        }]
+    },
+]
+const router = createHashRouter(routerRaw.concat(routerStatic));
 export {
     router,
     routerStatic
