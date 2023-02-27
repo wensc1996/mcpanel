@@ -6,8 +6,8 @@ import UseState from '../views/hookTest/UseState'
 import { useAppSelector, useAppDispatch } from '../hooks/storeHook'
 import { RootState } from '../store/store';
 import img from '../assets/images/u=104930965,2278568771&fm=26&gp=0.jpg'
-import {routerRaw} from '../router';
 import { MenuItemType } from 'antd/lib/menu/hooks/useItems';
+import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header, Content, Sider } = Layout;
 
@@ -19,14 +19,20 @@ const items1: MenuProps['items'] = ['1', '2', '3'].map(key => ({
 
 
 const App: React.FC = () => {
-    const items2: MenuProps['items'] = routerRaw.map(routerItem => {
-        return {
-            key : routerItem.path, 
-            icon: React.createElement(UserOutlined),
-            label: routerItem.meta?.name,
-            onClick: (param: any) => {console.log(param)},
-        }
-    })
+    const items2: MenuProps['items'] = []
+    // [{
+    //     path: '/main',
+    //     meta: {
+    //         name: '用户管理'
+    //     }
+    // }].map(routerItem => {
+    //     return {
+    //         key : routerItem.path, 
+    //         icon: React.createElement(UserOutlined),
+    //         label: routerItem.meta?.name,
+    //         onClick: (param: any) => {console.log(param)},
+    //     }
+    // })
     const userInfo = useAppSelector((state: RootState) => state.userInfo)
     const handleMenuClicked = (param: {item: any, key: string, keyPath: string, domEvent : any}) => {
         console.log(param)
