@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import React from 'react';
 
-let routerStatic: RouteObject[] = [{
+let routerStatic = [{
     path: "/",
     loader: () => {
         return redirect('/main');
@@ -56,7 +56,7 @@ let routerStatic: RouteObject[] = [{
 //         name: string
 //     }
 // }
-let routerRaw: RouteObjects[]= [
+let routerRaw: any[]= [
     {
         path: "/main",
         element: React.createElement(Layout),
@@ -67,10 +67,10 @@ let routerRaw: RouteObjects[]= [
         children: [{
             path: "/main",
             element: React.createElement(Layout),
-            // meta: {
-            //     icon: React.createElement(UserOutlined),
-            //     name: '用户管理'
-            // },
+            meta: {
+                icon: React.createElement(UserOutlined),
+                name: '用户管理'
+            },
         }]
     },
 ]

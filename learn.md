@@ -344,7 +344,7 @@ const divRef = useRef<HTMLDivElement>(null)
 
 #### React.forwardRef
 
-由于函数式组件无法拿取到*`子组件`*的实例，需要通过forwardRef去拿，如果是类子组件可以直接使用ref拿取。不推荐，推荐使用状态提升，事件回调，具有耦合性
+由于函数式组件无法拿取到`子组件`的实例，需要通过forwardRef去拿，如果是类子组件可以直接使用ref拿取。不推荐，推荐使用状态提升，事件回调，具有耦合性
 
 ```tsx
 const ChildFC = React.forwardRef((props, ref: Ref<HTMLInputElement>) => {
@@ -384,3 +384,188 @@ const [count, setCount] = useState(0)
 #### useEffect
 
 页面初始化和页面变动时就会触发useEffect,所以可以在useEffect中添加监控字段，[]只在初始化调用，按需添加字段即可，会造成闭包问题
+```tsx
+const [timeCount, setTimeCount] = useState(10)
+const timer = useRef<NodeJS.Timer>()
+useEffect(() => {
+    console.log(timeCount)
+    timer.current = setInterval(() => {
+        setTimeCount((c) => c - 1)
+    }, 1000)
+    // 这里就会造成闭包，无法清除
+    if(timeCount == 0) {
+        clearInterval(timer.current)
+    }
+    // 返回时要清除掉定时器
+    return () => {
+        clearInterval(timer.current)
+    }
+    // 这里要监控count值才行
+}, [timeCount])
+```
+### Redux-toolkit
+```ts
+// storeHook.ts
+// 声明全局redux+ts hook
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../store/store'
+
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch: () => AppDispatch = useDispatch
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+```
+
+```ts
+// store.ts
+import userInfoSlice from './userInfoSlice';
+import { configureStore } from '@reduxjs/toolkit'
+import {
+    persistStore,
+    persistReducer,
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
+} from 'redux-persist'
+import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
+
+const store = configureStore({
+    reducer: {
+        userInfo: persistReducer({
+            key: 'userInfo',
+            storage,
+        }, userInfoSlice)
+    },
+    middleware: (getDefaultMiddleware) =>
+    // 忽略警告
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+    devTools: process.env.NODE_ENV !== 'production',
+})
+// 持久化存储
+let persistor = persistStore(store)
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch
+export {
+    store,
+    persistor
+}
+```
+
+```ts
+// userInfoSlice.ts
+import { LoginResponse } from './../utils/apis/userApi';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from './store';
+
+const initialState: LoginResponse =  {
+    userId: 0,
+    playerId: '',
+    loginIp: '',
+    roleId: 0,
+    account: ''
+}
+
+export const getUserInfoAsyncThunk = createAsyncThunk("getUserInfoAsyncThunk", async () => {
+    const res = await new Promise<LoginResponse>((resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                userId: 1,
+                playerId: '66',
+                loginIp: '127.0.0.1',
+                roleId: 1,
+                account: '1123'
+            })
+        }, 2000)
+    })
+    return res
+})
+export const userInfo = createSlice({
+    name: 'userInfo',
+    initialState,
+    reducers: {
+        update: (state: LoginResponse, action: PayloadAction<LoginResponse>) => {
+            // Redux Toolkit allows us to write "mutating" logic in reducers. It
+            // doesn't actually mutate the state because it uses the Immer library,
+            // which detects changes to a "draft state" and produces a brand new
+            // immutable state based off those changes
+            return action.payload
+        },
+    },
+    extraReducers(builder) {
+        builder
+        .addCase(getUserInfoAsyncThunk.fulfilled, (type, action) => {
+            console.log(type, action)
+            return action.payload
+        })
+    },
+})
+
+// Action creators are generated for each case reducer function
+export const { update } = userInfo.actions
+
+// Other code such as selectors can use the imported `RootState` type
+export const selectUserInfo = (state: RootState) => state.userInfo
+
+export default userInfo.reducer
+```
+
+### react-router
+<Link to={}> 与a href的区别在于 Linkto不会造成页面刷新，a会造成页面刷新
+
+``` tsx
+// 路由嵌套
+<Route path="/" element={AppLayout}>
+  <Route path="/about" element={<About>}>
+    
+  </Route>
+</Route>
+```
+
+```tsx
+function AppLayout() {
+  // 获取路由信息
+  const location = useLocation()
+  useEffect(() => {
+    console.log(location.pathname)
+  }, [location.pathname])
+
+  // 获取路由参数?后面的
+  let [searchParams, setSearchParams] = useSearchParams()
+
+  return (<div>
+    Applayout
+    <Outlet /> // 此处来嵌套渲染子路由信息（模板继承机制），
+  </div>)
+}
+```
+```tsx
+// 集中式路由
+{useRouter(router)}
+let routerStatic: RouteObject[] = [{
+    path: "/",
+    index: true, // 是否是首页
+    loader: () => {
+        return redirect('/main');
+    },
+}, {
+    path: "*",
+    element: React.createElement(NotFound),
+}, {
+    path: "/login",
+    element: React.createElement(Login),
+}]
+```
+#### 路由懒加载
+`但是会造成闪屏，公用的地方可以不使用懒加载`
+```tsx
+const About = React.lazy(() => import('./About.tsx'))
+
+```

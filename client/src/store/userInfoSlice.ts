@@ -1,5 +1,5 @@
 import { LoginResponse } from './../utils/apis/userApi';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './store';
 
 const initialState: LoginResponse =  {
@@ -9,6 +9,21 @@ const initialState: LoginResponse =  {
     roleId: 0,
     account: ''
 }
+
+export const getUserInfoAsyncThunk = createAsyncThunk("getUserInfoAsyncThunk", async () => {
+    const res = await new Promise<LoginResponse>((resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                userId: 1,
+                playerId: '66',
+                loginIp: '127.0.0.1',
+                roleId: 1,
+                account: '1123'
+            })
+        }, 2000)
+    })
+    return res
+})
 export const userInfo = createSlice({
     name: 'userInfo',
     initialState,
@@ -20,6 +35,13 @@ export const userInfo = createSlice({
             // immutable state based off those changes
             return action.payload
         },
+    },
+    extraReducers(builder) {
+        builder
+        .addCase(getUserInfoAsyncThunk.fulfilled, (type, action) => {
+            console.log(type, action)
+            return action.payload
+        })
     },
 })
 
